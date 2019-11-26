@@ -1,0 +1,47 @@
+{
+  "name": "pickup-backend",
+  "version": "1.0.0",
+  "description": "Node, MongoDB backend for Pickup Ride App",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alonzoalden/pickupride-backend.git"
+  },
+  "author": "Alonzo Alden",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "babel-register": "^6.26.0",
+    "body-parser": "1.15.0",
+    "cors": "2.7.1",
+    "ejs": "2.5.5",
+    "errorhandler": "1.4.3",
+    "express": "4.13.4",
+    "express-jwt": "^3.3.0",
+    "express-jwt-authz": "^1.0.0",
+    "express-session": "1.13.0",
+    "jsonwebtoken": "7.1.9",
+    "jwks-rsa": "^1.2.1",
+    "lodash": "^4.17.11",
+    "method-override": "2.3.5",
+    "methods": "1.1.2",
+    "morgan": "1.7.0",
+    "passport": "0.3.2",
+    "passport-local": "1.0.0",
+    "pg": "^7.4.3",
+    "pg-pool": "^2.0.3",
+    "superagent": "^5.1.1",
+    "superagent-promise": "^1.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "bugs": {
+    "url": "https://github.com/alonzoalden/pickupride-backend/issues"
+  },
+  "homepage": "https://github.com/alonzoalden/pickupride-backend#readme"
+}
