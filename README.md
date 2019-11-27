@@ -1,4 +1,4 @@
-# pickupride-backend
+# lists-backend
 
 ## Requires config file with keys. Care to make contributions? Email me for keys.
 

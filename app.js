@@ -39,10 +39,10 @@ if (!isProduction) {
 //require('./models/Route');
 //require('./models/Listing');
 
-
+app.use(bodyParser.json());
 require('./config/passport');
 app.use(require('./routes'));
-
+app.use(bodyParser.json());
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
