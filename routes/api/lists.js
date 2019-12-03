@@ -9,7 +9,7 @@ router.get('/lists', async (req, res, next) => {
     try {
         const dbResponseCategories = await db.query(
             `SELECT * FROM "Categories"`
-        )
+            )
         if (dbResponseCategories.err) next(dbResponseCategories.err);
         const dbResponseLists = await db.query(
             `SELECT * FROM "Lists"`
