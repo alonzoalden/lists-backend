@@ -58,7 +58,7 @@ router.post('/lists', async (req, res, next) => {
                     VALUES($1)
                     RETURNING *`,
                     [
-                        req.body.CategoryTitle,
+                        'None',
                     ])
                 if (dbCategoryAddResponse.err) next(err);
             }

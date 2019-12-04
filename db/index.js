@@ -5,7 +5,8 @@ const connectionString = keys.dbConnectionString;
 
 
 const pool = new Pool({
-    connectionString: 'postgres://enduser:easyone12@localhost:5432/lists',
+    // connectionString: 'postgres://enduser:easyone12@localhost:5432/lists',
+    connectionString: connectionString
 });
 // {
 //   user: 'dbuser',
