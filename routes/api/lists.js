@@ -1,8 +1,8 @@
 const Http = require('../../agent.js');
 const router = require('express').Router();
 const db = require('../../db');
+const format = require('pg-format');
 const keys = require('../../env-config.js');
-
 
 // retreive lists
 router.get('/lists', async (req, res, next) => {
@@ -31,6 +31,25 @@ router.get('/lists', async (req, res, next) => {
     }
 });
 
+router.get('/list/:id', async (req, res, next) => {
+    try {
+        console.log(req.params.id);
+        const dbResponseLists = await db.query(
+            `SELECT * FROM "ListItems"
+            WHERE "ListID" = ($1)`,
+            [req.params.id]
+        )
+        if (dbResponseLists.err) next(dbResponseLists.err);
+        
+        console.log(dbResponseLists)
+        res.json(dbResponseLists.data.rows);
+    }
+    catch(e) {
+        console.log(e);
+    }
+});
+
+
 // add new list
 router.post('/lists', async (req, res, next) => {
     try {
@@ -47,6 +66,7 @@ router.post('/lists', async (req, res, next) => {
                     WHERE "Title" = 'None'`)
                 if (dbCategoryAddResponse.err) next(err);
             }
+            
             // Add the new category
             else {
                 // If there's no title, give a title of 'None'
@@ -58,14 +78,16 @@ router.post('/lists', async (req, res, next) => {
                     VALUES($1)
                     RETURNING *`,
                     [
-                        'None',
+                        req.body.CategoryTitle
                     ])
                 if (dbCategoryAddResponse.err) next(err);
             }
         }
 
+
+
         // This creates a new List
-        const dbResponse = await db.query(
+        const dbListResponse = await db.query(
             `INSERT INTO "Lists" ("Title", "CategoryID", "CategoryTitle", "Description", "ImageURL", "Created_At", "Updated_At")
             VALUES($1, $2, $3, $4, $5, $6, $7)
             RETURNING *`,
@@ -78,10 +100,46 @@ router.post('/lists', async (req, res, next) => {
                 req.body.Created,
                 req.body.Updated
             ])
-            if (dbResponse.err) next(err);
-            res.status(200).send({})
-            
+        if (dbListResponse.err) next(err);
+        
+
+        const responseBody = {
+            ListID: dbListResponse.data.rows[0].ListID,
+            CategoryID: dbListResponse.data.rows[0].CategoryID,
+            Title: dbListResponse.data.rows[0].Title,
+            CategoryTitle: dbListResponse.data.rows[0].CategoryTitle,
+            Description: dbListResponse.data.rows[0].Description,
+            ImageURL: dbListResponse.data.rows[0].ImageURL,
+            Created_At: dbListResponse.data.rows[0].Created_At,
+            Updated_At: dbListResponse.data.rows[0].Updated_At
         }
+
+        if (req.body.Items) {
+            const sqlItems = req.body.Items.map(item => {
+                return [
+                    dbListResponse.data.rows[0].ListID
+                    , item.Title
+                    , item.Description
+                    , item.ImageURL
+                    , item.Created
+                    , item.Updated
+                ];
+            });
+            const sql = format(
+                'INSERT INTO "ListItems"("ListID", "Title", "Description", "ImageURL", "Created_At", "Updated_At") VALUES %L'
+                , sqlItems);
+            //console.log(sql);  // INSERT INTO t (name, age) VALUES ('a', '1'), ('b', '2')
+
+            const dbListItemsResponse = await db.query(sql + 'RETURNING *');
+            if (dbListItemsResponse.err) next(err);
+            responseBody.Items = dbListItemsResponse.data.rows;
+            return res.status(200).send(responseBody);
+        }
+        else {
+            return res.status(200).send(responseBody);
+        }
+    }
+
     catch(e) {
         console.log(e);
     }

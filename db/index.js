@@ -20,6 +20,9 @@ module.exports = {
         const start = Date.now();
         return new Promise((resolve) => {
             pool.query(text, params, (err, res) => {
+                if (err) {
+                    console.log(err);
+                }
                 if (res) {
                     const duration = Date.now() - start;
                     // console.log('executed query', { text, duration, rows: res.rowCount });
