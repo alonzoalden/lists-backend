@@ -17,7 +17,7 @@ CREATE TABLE "Lists" (
     "ImageURL" varchar(120),
     "Created_At" varchar(20),
     "Updated_At" varchar(20),
-    FOREIGN KEY ("CategoryID") REFERENCES "Categories"("CategoryID")
+    FOREIGN KEY ("CategoryID") REFERENCES "Categories"("CategoryID") ON DELETE cascade
 );
 
 CREATE TABLE "ListItems" (
@@ -28,5 +28,5 @@ CREATE TABLE "ListItems" (
     "ImageURL" varchar(120),
     "Created_At" varchar(20),
     "Updated_At" varchar(20),
-    FOREIGN KEY ("ListID") REFERENCES "Lists"("ListID")
+    FOREIGN KEY ("ListID") REFERENCES "Lists"("ListID") ON DELETE cascade
 );

@@ -33,7 +33,6 @@ router.get('/lists', async (req, res, next) => {
 
 router.get('/list/:id', async (req, res, next) => {
     try {
-        console.log(req.params.id);
         const dbResponseLists = await db.query(
             `SELECT * FROM "ListItems"
             WHERE "ListID" = ($1)`,
@@ -55,8 +54,13 @@ router.post('/lists', async (req, res, next) => {
     try {
         let dbCategoryAddResponse;
 
-        // This creates a new Category
+        // Begin create a new Category
         if (!req.body.CategoryID) {
+
+            // If there's no Category title, give it a title of 'None'
+            if (!req.body.CategoryTitle) {
+                req.body.CategoryTitle = 'None';
+            }
 
             // If user Manually types in 'None', be sure to select the proper None category so we don't add a new category
             if (req.body.CategoryTitle && req.body.CategoryTitle.toLowerCase() === 'none') {
@@ -65,14 +69,24 @@ router.post('/lists', async (req, res, next) => {
                     FROM "Categories"
                     WHERE "Title" = 'None'`)
                 if (dbCategoryAddResponse.err) next(err);
+
+                // If none Category doesn't exist, create it
+                if (!dbCategoryAddResponse.data.rows.length) {
+                    dbCategoryAddResponse = await db.query(
+                        `INSERT INTO "Categories" ("Title")
+                        VALUES($1)
+                        RETURNING *`,
+                        [
+                            req.body.CategoryTitle
+                        ])
+                    if (dbCategoryAddResponse.err) next(err);
+                }
+
             }
             
             // Add the new category
             else {
-                // If there's no title, give a title of 'None'
-                if (!req.body.CategoryTitle) {
-                    req.body.CategoryTitle = 'None';
-                }
+                
                 dbCategoryAddResponse = await db.query(
                     `INSERT INTO "Categories" ("Title")
                     VALUES($1)
@@ -85,7 +99,7 @@ router.post('/lists', async (req, res, next) => {
         }
 
 
-
+        
         // This creates a new List
         const dbListResponse = await db.query(
             `INSERT INTO "Lists" ("Title", "CategoryID", "CategoryTitle", "Description", "ImageURL", "Created_At", "Updated_At")
@@ -139,7 +153,22 @@ router.post('/lists', async (req, res, next) => {
             return res.status(200).send(responseBody);
         }
     }
+    catch(e) {
+        console.log(e);
+    }
+});
 
+
+// delete list
+router.delete('/list/:id', async (req, res, next) => {
+    try {
+        const dbResponseList = await db.query(
+            `DELETE FROM "Lists" WHERE "ListID"=($1)`,
+            [req.params.id]
+            )
+        if (dbResponseList.err) next(dbResponseLists.err);
+        return res.status(200).send({});
+    }
     catch(e) {
         console.log(e);
     }
