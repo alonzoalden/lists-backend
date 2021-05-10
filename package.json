@@ -23,7 +23,7 @@
     "express": "4.13.4",
     "express-session": "1.13.0",
     "jsonwebtoken": "7.1.9",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "method-override": "2.3.10",
     "methods": "1.1.2",
     "morgan": "1.9.1",
